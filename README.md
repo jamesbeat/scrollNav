@@ -86,14 +86,15 @@ There are a few customizable options in scrollNav using key : value pairs. Here 
 
 ```
 $('.post-article').scrollNav({
-	sections: 'h3', 
+	sections: 'h2, h3', // you can specify more than one element; nav items then can be style differently via classes
+	target: '#myTarget', // specify a target dom element to append the nav
 	titleText: 'Jump To',
 	fixedMargin: 40,
 	animated: true,
 	speed: 500,
 	showHeadline: true,
 	showTopLink: true,
-	listtype: 'ol',
+	listtype: 'ol',  // create either 'ul' or 'ol' lists
 });
 ```
 
