@@ -89,7 +89,11 @@ $('.post-article').scrollNav({
 	sections: 'h3', 
 	titleText: 'Jump To',
 	fixedMargin: 40,
-	animated: true
+	animated: true,
+	speed: 500,
+	showHeadline: true,
+	showTopLink: true,
+	listtype: 'ol',
 });
 ```
 
