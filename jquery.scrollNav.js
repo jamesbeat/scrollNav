@@ -12,7 +12,9 @@
 			fixedMargin: 40,
 			animated: true,
 			speed: 500,
-			showHeadline: true
+			showHeadline: true,
+			showTopLink: true,
+			listtype: 'ol',
 		};
 
 		$.extend(settings, options);
@@ -23,7 +25,10 @@
 		var $container		= this;
 		var $sections		= $container.find(settings.sections);
 		var $nav			= $('<nav />', {'class': 'scroll-nav', 'role': 'navigation'});
-
+		var $target			= settings.target; 
+		var $listtype		= settings.listtype; 
+				
+		
 		// Find the article container and either grab it's id or give it one
 		// Initial setup of the section array
 
@@ -32,14 +37,20 @@
 			var offset		= $container.offset().top;
 
 			if (containerID) {
-				$sectionArray.push({id: containerID, offset: offset, text: 'Top'});
+				if(settings.showTopLink === true){
+					$sectionArray.push({id: containerID, offset: offset, text: 'Top'});
+				}
+				
 			}
 			else {
 				$container.attr('id', 'jumpNav-0');
-				$sectionArray.push({id: 'jumpNav-0', offset: offset, text: 'Top'});
+				if(settings.showTopLink === true){
+					$sectionArray.push({id: 'jumpNav-0', offset: offset, text: 'Top'});
+				}
 			}
 		};
-
+		
+		
 		// Find each section and give it an id
 		// Add each section and it's details to the section array
 
@@ -48,9 +59,11 @@
 				var sectionID	= 'jumpNav-' + (i + 1);
 				var $offset		= $(this).offset().top;
 				var $text		= $(this).html();
-
+				var $source		= this.tagName;
+				
 				$(this).attr('id', sectionID);
-				$sectionArray.push( {id: sectionID, offset: $offset, text: $text} );
+												
+				$sectionArray.push( {id: sectionID, offset: $offset, text: $text, source: $source } );
 			});
 		};
 
@@ -59,10 +72,19 @@
 
 		var setupNav = function() {
 			var $headline	= $('<span />', {'class': 'scroll-nav-heading', text: settings.titleText});
-			var $list		= $('<ol />', {'class': 'scroll-nav-list'});
+			
+			if($listtype == "ol"){
+				var $list 	= $('<ol />', {'class': 'scroll-nav-list'});
+			}
+			else if($listtype == "ul"){
+				var $list 	= $('<ul />', {'class': 'scroll-nav-list'});
+			}
+			else{
+				var $list 	= $('<ol />', {'class': 'scroll-nav-list'});
+			}			
 
 			$.each($sectionArray, function(i) {
-				var $item	= (i === 0) ? $('<li />', {'class': 'scroll-nav-item active'}) : $('<li />', {'class': 'scroll-nav-item'});
+				var $item	= (i === 0) ? $('<li />', {'class': 'scroll-nav-item active source_'+this.source}) : $('<li />', {'class': 'scroll-nav-item source_'+this.source});
 				var $link	= $('<a />', {'href': '#' + this.id, 'class': 'scroll-nav-link', text: this.text});
 
 				$list.append( $item.append($link) );
@@ -120,7 +142,17 @@
 		// Now add the nav to our page
 
 		if ($container.length !== 0 && $sections.length !== 0) {
-			$nav.insertBefore($container);
+			
+			if($target){ //if there is a target specified
+				$nav.insertAfter($target);
+				console.log("insert at target"+$target);
+			}
+			else{
+				$nav.insertBefore($container);
+				console.log("insert above container");
+
+			}
+					
 		}
 		else if ($container.length === 0) {
 			console.log("Build failed, scrollNav could not find '" + $container.selector + "'");
